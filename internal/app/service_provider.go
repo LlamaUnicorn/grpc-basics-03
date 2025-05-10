@@ -2,8 +2,11 @@ package app
 
 import (
 	"context"
+	linkRepository "github.com/llamaunicorn/grpc-basics-03/internal/repository/link"
+	linkService "github.com/llamaunicorn/grpc-basics-03/internal/service/link"
 	"log"
 
+	"github.com/llamaunicorn/grpc-basics-03/internal/api/link"
 	"github.com/llamaunicorn/grpc-basics-03/internal/api/note"
 	"github.com/llamaunicorn/grpc-basics-03/internal/client/db"
 	"github.com/llamaunicorn/grpc-basics-03/internal/client/db/pg"
@@ -23,10 +26,13 @@ type serviceProvider struct {
 	dbClient       db.Client
 	txManager      db.TxManager
 	noteRepository repository.NoteRepository
+	linkRepository repository.LinkRepository
 
 	noteService service.NoteService
+	linkService service.LinkService
 
 	noteImpl *note.Implementation
+	linkImpl *link.Implementation
 }
 
 func newServiceProvider() *serviceProvider {
@@ -111,4 +117,31 @@ func (s *serviceProvider) NoteImpl(ctx context.Context) *note.Implementation {
 	}
 
 	return s.noteImpl
+}
+
+func (s *serviceProvider) LinkRepository(ctx context.Context) repository.LinkRepository {
+	if s.linkRepository == nil {
+		s.linkRepository = linkRepository.NewRepository(s.DBClient(ctx))
+	}
+
+	return s.linkRepository
+}
+
+func (s *serviceProvider) LinkService(ctx context.Context) service.LinkService {
+	if s.linkService == nil {
+		s.linkService = linkService.NewService(
+			s.LinkRepository(ctx),
+			s.TxManager(ctx),
+		)
+	}
+
+	return s.linkService
+}
+
+func (s *serviceProvider) LinkImpl(ctx context.Context) *link.Implementation {
+	if s.linkImpl == nil {
+		s.linkImpl = link.NewImplementation(s.LinkService(ctx))
+	}
+
+	return s.linkImpl
 }

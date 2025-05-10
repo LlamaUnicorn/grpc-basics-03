@@ -1,0 +1,70 @@
+syntax = "proto3";
+
+package link_v1;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+
+option go_package = "github.com/llamaunicorn/grpc-basics-03/config/pkg/link_v1;link_v1";
+
+service LinkV1 {
+  rpc Create(CreateRequest) returns (CreateResponse);
+  rpc Get(GetRequest) returns (GetResponse);
+  rpc List(ListRequest) returns (ListResponse);
+  rpc Update(UpdateRequest) returns (google.protobuf.Empty);
+  rpc Delete(DeleteRequest) returns (google.protobuf.Empty);
+}
+
+message LinkInfo {
+  string url = 1;
+  string title = 2;
+  string description = 3;
+}
+
+message Link {
+  int64 id = 1;
+  LinkInfo info = 2;
+  google.protobuf.Timestamp created_at = 3;
+  google.protobuf.Timestamp updated_at = 4;
+}
+
+message UpdateLinkInfo {
+  google.protobuf.StringValue url = 1;
+  google.protobuf.StringValue title = 2;
+  google.protobuf.StringValue description = 3;
+}
+
+message CreateRequest {
+  LinkInfo info = 1;
+}
+
+message CreateResponse {
+  int64 id = 1;
+}
+
+message GetRequest {
+  int64 id = 1;
+}
+
+message GetResponse {
+  Link link = 1;
+}
+
+message ListRequest {
+  int64 limit = 1;
+  int64 offset = 2;
+}
+
+message ListResponse {
+  repeated Link links = 1;
+}
+
+message UpdateRequest {
+  int64 id = 1;
+  UpdateLinkInfo info = 2;
+}
+
+message DeleteRequest {
+  int64 id = 1;
+}

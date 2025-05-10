@@ -11,7 +11,8 @@ import (
 
 	"github.com/llamaunicorn/grpc-basics-03/internal/closer"
 	"github.com/llamaunicorn/grpc-basics-03/internal/config"
-	desc "github.com/llamaunicorn/grpc-basics-03/pkg/note_v1"
+	linkDesc "github.com/llamaunicorn/grpc-basics-03/pkg/link_v1"
+	noteDesc "github.com/llamaunicorn/grpc-basics-03/pkg/note_v1"
 )
 
 type App struct {
@@ -75,7 +76,8 @@ func (a *App) initGRPCServer(ctx context.Context) error {
 
 	reflection.Register(a.grpcServer)
 
-	desc.RegisterNoteV1Server(a.grpcServer, a.serviceProvider.NoteImpl(ctx))
+	noteDesc.RegisterNoteV1Server(a.grpcServer, a.serviceProvider.NoteImpl(ctx))
+	linkDesc.RegisterLinkV1Server(a.grpcServer, a.serviceProvider.LinkImpl(ctx))
 
 	return nil
 }

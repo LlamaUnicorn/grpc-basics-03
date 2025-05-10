@@ -13,6 +13,7 @@ get-deps:
 
 generate:
 	make generate-note-api
+	make generate-link-api
 
 generate-note-api:
 	mkdir -p pkg/note_v1
@@ -22,6 +23,15 @@ generate-note-api:
 	--go-grpc_out=pkg/note_v1 --go-grpc_opt=paths=source_relative \
 	--plugin=protoc-gen-go-grpc=bin/protoc-gen-go-grpc \
 	api/note_v1/note.proto
+
+generate-link-api:
+	mkdir -p pkg/link_v1
+	protoc --proto_path api/link_v1 \
+	--go_out=pkg/link_v1 --go_opt=paths=source_relative \
+	--plugin=protoc-gen-go=bin/protoc-gen-go \
+	--go-grpc_out=pkg/link_v1 --go-grpc_opt=paths=source_relative \
+	--plugin=protoc-gen-go-grpc=bin/protoc-gen-go-grpc \
+	api/link_v1/link.proto
 
 local-migration-status:
 	$(LOCAL_BIN)/goose -dir ${MIGRATION_DIR} postgres ${PG_DSN} status -v
